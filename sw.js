@@ -1,8 +1,10 @@
+// Service Worker for Challenge Tracker PWA
+// Uses runtime caching to handle dynamic filenames (main.hash.js, main.hash.css)
+// instead of hardcoding specific bundle names that change with each build
+
 const CACHE_NAME = 'challenge-tracker-v1';
 const urlsToCache = [
   '/challenge_tracker/',
-  '/challenge_tracker/static/js/bundle.js',
-  '/challenge_tracker/static/css/main.css',
   '/challenge_tracker/manifest.json'
 ];
 
@@ -36,18 +38,32 @@ self.addEventListener('fetch', (event) => {
             return response;
           }
           
-          // Clone the response
-          const responseToCache = response.clone();
-          
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
+          // Only cache GET requests for our app
+          if (event.request.method === 'GET' && 
+              (event.request.url.includes('/challenge_tracker/') || 
+               event.request.url.includes('/static/'))) {
+            
+            // Clone the response
+            const responseToCache = response.clone();
+            
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                cache.put(event.request, responseToCache);
+              });
+          }
           
           return response;
         }).catch(() => {
-          // Return offline page or cached version
-          return caches.match('/');
+          // Return cached version of the main app if available
+          return caches.match('/challenge_tracker/').then((cachedResponse) => {
+            return cachedResponse || new Response('App is offline', {
+              status: 503,
+              statusText: 'Service Unavailable',
+              headers: new Headers({
+                'Content-Type': 'text/plain'
+              })
+            });
+          });
         });
       }
     )
