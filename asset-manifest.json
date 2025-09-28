@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/challenge_tracker/static/css/main.49f7cf48.css",
+    "main.js": "/challenge_tracker/static/js/main.e303dc74.js",
+    "index.html": "/challenge_tracker/index.html",
+    "main.49f7cf48.css.map": "/challenge_tracker/static/css/main.49f7cf48.css.map",
+    "main.e303dc74.js.map": "/challenge_tracker/static/js/main.e303dc74.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.49f7cf48.css",
+    "static/js/main.e303dc74.js"
+  ]
+}
